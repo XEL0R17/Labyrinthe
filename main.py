@@ -3,7 +3,7 @@ from copy import deepcopy
 
 
 SIZE = 7
-MY_USERNAME = 'A_star'
+MY_USERNAME = 'XS'
 
 GATES = {
     # Décale la colonne de haut à bas
