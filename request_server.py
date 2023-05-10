@@ -1,29 +1,41 @@
 import socket
 import json
 
-addressplayer = ('0.0.0.0', 4000)
+player = ('0.0.0.0', 4000)
+server = ('localhost', 3000) 
 
-serveraddress = ('localhost', 3000) 
-
-def subscribing ():
+def sub():
     with socket.socket() as s: 
-      try:
-         s.connect(serveraddress)
-         inscription = {
-            "request": "subscribe",
-            "port": addressplayer[1], #2e element de address player 
-            "name": "Champions",
-            "matricules": ["20089", "195105"]
-         }
-         s.send(json.dumps(inscription).encode()) #encode et converti inscription(python) en json 
-         response = json.loads(s.recv(2048).decode()) #decode la reponse et convertis le fichier json 
-         print(response)
-      except OSError:
-         print ('Connexion failed')
+        try:
+            s.connect(server)
+            inscription = {
+                "request": "subscribe",
+                "port": player[1],
+                "name": "Champions",
+                "matricules": ["20089", "195105"]
+            }
+            s.send(json.dumps(inscription).encode())
+            response = json.loads(s.recv(2048).decode())
+            print(response)
+        except OSError:
+            print('Connexion failed')
+            
+        if response == {"response": "ok"}:
+            print("Start the game!")
+        else: 
+            raise ValueError("Subscribing failed" + response)
 
-      if response == {"response": "ok"}:
-         print ("Start the game!")
-      else: 
-         raise ValueError ("Subscribing fail" + response)
+        while True:
+            try:
+                data = s.recv(2048).decode()
+                if data:
+                    try:
+                        request = json.loads(data)
+                        if request["request"] == "ping":
+                            s.send(json.dumps({"response": "pong"}).encode())
+                    except json.JSONDecodeError as e:
+                        print(f"Invalid JSON: {e}")
+            except:
+                break
 
-subscribing()
+sub()
