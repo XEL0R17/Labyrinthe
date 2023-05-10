@@ -4,7 +4,7 @@ from simulation import server_state
 
 
 SIZE = 7
-MY_USERNAME = 'XS'
+MY_USERNAME = 'A_star'
 
 GATES = {
     # Décale la colonne de haut à bas
