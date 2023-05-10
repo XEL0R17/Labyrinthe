@@ -7,8 +7,7 @@ l'IA se comporte comme suit :
 
 Nous ne prenosn pas en compte les autres joueurs car nous n'avons pas implémenté le code de manière à ce que "si mon adversaire est à coté de la tile, je vais le repousser"
 
-
-#code 
+# Code
 
 - `index_to_coordinates(index)`: convertit un index de plateau en une paire de coordonnées de ligne et de colonne.
 - `coordinates_to_index(x, y)`: convertit une paire de coordonnées de ligne et de colonne en un index de plateau.
