@@ -1,5 +1,6 @@
 import heapq
 from copy import deepcopy
+from simulation import server_state
 
 
 SIZE = 7
@@ -31,6 +32,37 @@ DIRECTIONS = [
     (1, 0),   # S
     (0, -1),  # W= 1
 ]
+
+
+def index_to_coordinates(index):
+    return index // SIZE, index % SIZE
+
+
+def coordinates_to_index(x, y):
+    return x * SIZE + y
+
+
+def manhattan_distance(a, b):
+    ax, ay = a
+    bx, by = b
+    return abs(ax - bx) + abs(ay - by)
+
+
+def get_item_position(item, board):
+    for i in range(SIZE):
+        for j in range(SIZE):
+            tile = board[i][j]
+            if tile.item == item:
+                return i, j
+
+
+def get_player_position(player, board):
+    for i in range(SIZE):
+        for j in range(SIZE):
+            tile = board[i][j]
+            if tile.player == player:
+                return i, j
+
 
 class AI:
     def __init__(self, board, remaining_tile, player, target):
@@ -152,3 +184,67 @@ class AI:
                 closest_position = position
 
         return best_action["tile"], best_action["gate"], closest_position
+
+
+class Tile:
+    def __init__(self, N=True, E=True, S=True, W=True, item=None, player=None):
+        self.N = N
+        self.E = E
+        self.S = S
+        self.W = W
+        self.item = item
+        self.player = player
+
+
+class State:
+    def __init__(self, state):
+        self.players = state["players"]
+        self.current = state["current"]
+        self.positions = state["positions"]
+        self.target = state["target"]
+        self.remaining = state["remaining"]
+
+        self.tile = Tile(N=state["tile"]["N"], E=state["tile"]["E"], S=state["tile"]["S"], W=state["tile"]["W"],
+                         item=state["tile"]["item"])
+
+        self.board = []
+        for x in range(SIZE):
+            row = []
+            for y in range(SIZE):
+                i = x * SIZE + y
+                tile = state["board"][i]
+                tile = Tile(**tile)
+                if i in self.positions:
+                    position = self.positions.index(i)
+                    tile.player = self.players[position]
+
+                row.append(tile)
+            self.board.append(row)
+
+
+def main():
+    current_state = server_state  # Hypothèse que server_state vienne du serveur.
+    # TODO: Récupérer les states avec une boucle "While not end_game" depuis le serveur serveur au
+    #  lieu de "server_state" servant d'exemple
+
+    players = current_state["players"]
+    current_player_index = current_state["current"]
+    if players[current_player_index] == MY_USERNAME:  # si c'est mon tour
+        state = State(current_state)
+
+        player = MY_USERNAME
+        ai = AI(state.board, state.tile, player, state.target)
+        tile, gate, new_coord = ai.get_move()
+        new_position = coordinates_to_index(new_coord[0], new_coord[1])
+
+        move = {
+            "tile": {"N": tile.N, "E": tile.E, "S": tile.S, "W": tile.W, "item": None},
+            "gate": gate,
+            "new_position": new_position
+        }
+        print(move)
+        # TODO: Envoyer le mouvement au serveur au lieu de le print
+
+
+if __name__ == '__main__':
+    main()
