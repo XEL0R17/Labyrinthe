@@ -16,7 +16,7 @@ def handle_request(conn):
     elif request['request'] == 'request move':
         game_state = request['game_state']
         ai = AI(game_state)
-        move = ai.play()
+        move = ai.get_move()
         response = json.dumps({'response': 'move', 'move': move}).encode()
     else:
         response = json.dumps({'response': 'error', 'message': 'Unknown request'}).encode()
