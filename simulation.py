@@ -1,5 +1,5 @@
 server_state = {
-    "players": ["A_star", "Adversaire"],
+    "players": ["Champions", "Adversaire"],
     "current": 0,
     "positions": [1, 6],
     "target": 4,
