@@ -1,4 +1,4 @@
-# projet-python-2023
+# projet-python-2023 20089 195105
 l'IA se comporte comme suit :
 - Si elle peut accéder à l'item, elle le fait directement et joue un tile "random"
 
